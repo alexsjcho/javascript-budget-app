@@ -5,7 +5,7 @@ var budgetController = (function() {
 
 //UI CONTROLLER
 var UIController = (function() {
-  //Private variables
+  //Private variables and functions
   var DOMstrings = {
     inputType: ".add__type",
     inputDescription: ".add__description",
@@ -32,7 +32,18 @@ var UIController = (function() {
 
 //GLOBAL APP CONTROLLER
 var controller = (function(budgetCrtrl, UICtrl) {
-  var DOM = UICtrl.getDOMstrings();
+  //Private variables and functions
+  var setupEventListeners = function() {
+    var DOM = UICtrl.getDOMstrings();
+    document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
+    document.addEventListener("keypress", function(event) {
+      //Keycode for Return key
+      if (event.keyCode === 13 || event.which === 13) {
+        ctrlAddItem();
+      }
+    });
+  };
+
   var ctrlAddItem = function() {
     //1. Get input data
     var input = UICtrl.getInput();
@@ -43,12 +54,13 @@ var controller = (function(budgetCrtrl, UICtrl) {
     //5. Display the budget on UI
   };
 
-  //Listen to keyboard Enter event
-  document.querySelector(DOM.inputBtn).addEventListener("click", ctrlAddItem);
-  document.addEventListener("keypress", function(event) {
-    //Keycode for Return key
-    if (event.keyCode === 13 || event.which === 13) {
-      ctrlAddItem();
+  return {
+    init: function() {
+      setupEventListeners();
     }
-  });
+  };
+
+  //Listen to keyboard Enter event
 })(budgetController, UIController);
+
+controller.init();
