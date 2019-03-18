@@ -1,4 +1,4 @@
-//BUDGET CONTROLLER
+//BUDGET CONTROLLER MODULE
 var budgetController = (function() {
   //Private variables and functions
   var Expense = function(id, description, value) {
@@ -23,9 +23,34 @@ var budgetController = (function() {
       inc: 0
     }
   };
+  return {
+    addItem: function(type, des, val) {
+      //Declare all variables for use
+      var newItem, ID;
+
+      //Create new ID
+      if (data.allItems[type].length > 0) {
+        ID = data.allItems[type][data.allItems[type].length - 1].id + 1;
+      } else {
+        ID = 0;
+      }
+      //Create new item based on 'income' or 'expense' type
+      if (type === "exp") {
+        newItem = new Expense(ID, des, val);
+      } else if (type === "inc") {
+        newItem = new Income(ID, des, val);
+      }
+
+      //Push items into our data structure
+      data.allItems[type].push(newItem);
+
+      //Return the new element
+      return newItem;
+    }
+  };
 })();
 
-//UI CONTROLLER
+//UI CONTROLLER MODULE
 var UIController = (function() {
   //Private variables and functions
   var DOMstrings = {
@@ -52,7 +77,7 @@ var UIController = (function() {
 })();
 0;
 
-//GLOBAL APP CONTROLLER
+//GLOBAL APP CONTROLLER MODULE
 var controller = (function(budgetCrtrl, UICtrl) {
   //Private variables and functions
   var setupEventListeners = function() {
@@ -67,10 +92,13 @@ var controller = (function(budgetCrtrl, UICtrl) {
   };
 
   var ctrlAddItem = function() {
+    //Declare all variables for use
+    var input, newItem;
+
     //1. Get input data
-    var input = UICtrl.getInput();
-    console.log(input);
+    input = UICtrl.getInput();
     //2. Add item to budget controller
+    newItem = budgetCrtrl.addItem(input.type, input.description, input.value);
     //3. Add item to UI
     //4. Calculate budget
     //5. Display the budget on UI
